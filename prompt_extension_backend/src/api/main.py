@@ -21,10 +21,21 @@ app = FastAPI(
     openapi_tags=openapi_tags,
 )
 
+# CORS note:
+# - Extension popups run on a `chrome-extension://<extension-id>` origin.
+# - Using allow_origins=["*"] together with allow_credentials=True is not valid per
+#   the CORS spec and can cause browsers to reject requests/preflights.
+# - We explicitly allow common local dev origins and any chrome-extension origin.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
+    allow_origin_regex=r"^chrome-extension://.*$",
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
